@@ -9,7 +9,7 @@
 class RobotDemo : public SimpleRobot
 {
 	VisionSample2014* vision;
-
+	AxisCamera* camera;
 public:
 	
 	RobotDemo()
@@ -32,7 +32,15 @@ public:
 	{
 		while (IsOperatorControl())
 		{
+			camera->WriteExposureControl(AxisCamera::kExposure_Automatic);
+			camera->WriteWhiteBalance(AxisCamera::kWhiteBalance_Automatic);
+			camera->WriteBrightness(1);
+				
 			SmartDashboard::PutBoolean("HOT", vision->ProcessImage());
+			
+			camera->WriteExposureControl(AxisCamera::kExposure_Automatic);
+			camera->WriteWhiteBalance(AxisCamera::kWhiteBalance_Automatic);
+			camera->WriteBrightness(1);
 		}
 	}
 	

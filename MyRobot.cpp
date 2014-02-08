@@ -9,12 +9,15 @@
 class RobotDemo : public SimpleRobot
 {
 	VisionSample2014* vision;
-	AxisCamera* camera;
+	AxisCamera& camera;
+	Joystick stick1;
 public:
 	
-	RobotDemo()
+	RobotDemo():
+		vision(new VisionSample2014),
+		camera(AxisCamera::GetInstance("10.25.12.11")),
+		stick1(1)
 	{
-		vision = new VisionSample2014;
 		SmartDashboard::init();
 	}
 
@@ -30,17 +33,19 @@ public:
 	 */
 	void OperatorControl()
 	{
+		
 		while (IsOperatorControl())
 		{
-			camera->WriteExposureControl(AxisCamera::kExposure_Automatic);
-			camera->WriteWhiteBalance(AxisCamera::kWhiteBalance_Automatic);
-			camera->WriteBrightness(1);
-				
+
 			SmartDashboard::PutBoolean("HOT", vision->ProcessImage());
-			
-			camera->WriteExposureControl(AxisCamera::kExposure_Automatic);
-			camera->WriteWhiteBalance(AxisCamera::kWhiteBalance_Automatic);
-			camera->WriteBrightness(1);
+			if(stick1.GetRawButton(1)) {
+				SetToAutonomous();	
+			}
+			else if(stick1.GetRawButton(2)) {
+				SetToTeleop();
+			}
+				
+
 		}
 	}
 	
@@ -49,6 +54,14 @@ public:
 	 */
 	void Test() {
 
+	}
+	
+	void SetToAutonomous() {
+		camera.WriteBrightness(0);
+	}
+	
+	void SetToTeleop() {
+		camera.WriteBrightness(100);
 	}
 };
 
